@@ -4,8 +4,12 @@ const throttle = require('@sitespeed.io/throttle');
 const Logger = require('./Logger');
 const config = require('../config');
 const Bot = require('./Bot');
+const { Peer } = require('./peer.js');
+const record = require('./record');
 
 const logger = new Logger('Room');
+
+const peers = new Map();
 
 /**
  * Room class.
@@ -234,6 +238,12 @@ class Room extends EventEmitter
 		peer.data.consumers = new Map();
 		peer.data.dataProducers = new Map();
 		peer.data.dataConsumers = new Map();
+
+		const objPeer = new Peer(peer.id);
+
+		peers.set(peer.id, objPeer);
+
+		record.startRecord(objPeer);
 
 		peer.on('request', (request, accept, reject) =>
 		{
@@ -1109,6 +1119,13 @@ class Room extends EventEmitter
 				// Store the Producer into the protoo Peer data Object.
 				peer.data.producers.set(producer.id, producer);
 
+				const peerObj = peers.get(peer.id);
+
+				if (peerObj) 
+				{
+					peerObj.addProducer(producer);
+				}
+
 				// Set Producer events.
 				producer.on('score', (score) =>
 				{
@@ -1660,6 +1677,13 @@ class Room extends EventEmitter
 
 					// Store the Consumer into the protoo consumerPeer data Object.
 					consumerPeer.data.consumers.set(consumer.id, consumer);
+
+					const peerObj = peers.get(consumerPeer.id);
+
+					if (peerObj) 
+					{
+						peerObj.consumers.push(consumer);
+					}
 
 					// Set Consumer events.
 					consumer.on('transportclose', () =>
