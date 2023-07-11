@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable camelcase */
 
 process.title = 'mediasoup-demo-server';
 process.env.DEBUG = process.env.DEBUG || '*INFO* *WARN* *ERROR*';
@@ -23,6 +24,7 @@ const utils = require('./lib/utils');
 const Room = require('./lib/Room');
 const interactiveServer = require('./lib/interactiveServer');
 const interactiveClient = require('./lib/interactiveClient');
+const NodeMediaServer = require('node-media-server');
 
 const logger = new Logger();
 
@@ -76,6 +78,40 @@ async function run()
 
 	// Run a protoo WebSocketServer.
 	await runProtooWebSocketServer();
+
+	const configMediaService = {
+		rtmp : {
+			port         : 1935,
+			chunk_size   : 60000,
+			gop_cache    : true,
+			ping         : 30,
+			ping_timeout : 60
+		},
+		http : {
+			port         : 8000,
+			mediaroot    : './files',
+			allow_origin : '*'
+		}
+		// https: {
+		// 	port: 8443,
+		// 	key:'./privatekey.pem',
+		// 	cert:'./certificate.pem',
+		// }
+		// trans : {
+		// 	ffmpeg : '/usr/bin/ffmpeg',
+		// 	tasks  : [
+		//	{
+		//		app: 'live',
+		//		mp4: true,
+		//		mp4Flags: '[movflags=frag_keyframe+empty_moov]',
+		//	}
+		// 	]
+		// }
+	};
+
+	const nms = new NodeMediaServer(configMediaService);
+
+	nms.run();
 
 	// Log rooms status every X seconds.
 	setInterval(() =>

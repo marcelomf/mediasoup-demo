@@ -20,6 +20,7 @@
     "express": "^4.17.1",
     "heapdump": "^0.3.15",
     "mediasoup": "github:versatica/mediasoup#v3",
+    "node-media-server": "^2.6.2",
     "pidusage": "^2.0.21",
     "protoo-server": "^4.0.5"
   },
