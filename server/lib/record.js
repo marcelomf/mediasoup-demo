@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const {
 	getPort,
 	releasePort
@@ -94,10 +95,6 @@ const publishProducerRtpStream = async (peer, producer, router) =>
 	});
   
 	peer.consumers.push(rtpConsumer);
-
-	console.log("EEEEEUUUUU");
-
-	console.log(rtpConsumer);
  
 	return {
 		remoteRtpPort,
@@ -131,7 +128,8 @@ const startRecord = async (peer, router) =>
 		try 
 		{
 			recordInfo[producer.kind] = await publishProducerRtpStream(peer, producer, router);
-		} catch (e) 
+		} 
+		catch (e) 
 		{
 			console.error(e);
 		}
@@ -139,20 +137,10 @@ const startRecord = async (peer, router) =>
   
 	recordInfo.fileName = Date.now().toString();
 
-	console.log("START RECORD");
-	
-	console.log(recordInfo);
-
 	if (!recordInfo.video || !recordInfo.audio) return;
 	
-	console.log("PROCESSS 1");
-  
 	peer.process = getProcess(recordInfo);
 
-	console.log("PROCESSS 2");
-
-	console.log(peer.process);
-  
 	setTimeout(async () => 
 	{
 		for (const consumer of peer.consumers) 
@@ -160,11 +148,14 @@ const startRecord = async (peer, router) =>
 			// eslint-disable-next-line max-len
 			// Sometimes the consumer gets resumed before the GStreamer process has fully started
 			// so wait a couple of seconds
-			try {
-			await consumer.resume();
-			await consumer.requestKeyFrame();
-			} catch(e) {
-			console.error(e);
+			try 
+			{
+				await consumer.resume();
+				await consumer.requestKeyFrame();
+			} 
+			catch (e) 
+			{
+				console.error(e);
 			}
 		}
 	}, 1000);
@@ -190,7 +181,6 @@ const stopRecord = async (peer) =>
 	}
   
 	peer.process.kill();
-	console.log("MATOU PROCESSO");
 	peer.process = undefined;
   
 	// Release ports from port set

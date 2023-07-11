@@ -261,9 +261,9 @@ class Room extends EventEmitter
 
 		peer.on('close', async () =>
 		{
+			// eslint-disable-next-line no-shadow
 			const peerObj = peers.get(peer.id);
-			console.log("ACHOUUUUUUU STOP");
-			console.log(peerObj);
+
 			await record.stopRecord(peerObj);
 	
 			if (this._closed)
@@ -1010,8 +1010,10 @@ class Room extends EventEmitter
 				transport.on('sctpstatechange', async (sctpState) =>
 				{
 					logger.debug('WebRtcTransport "sctpstatechange" event [sctpState:%s]', sctpState);
-					if (sctpState == "connecting") {
+					if (sctpState == 'connecting') 
+					{
 						const peerObj = peers.get(peer.id);
+
 						await record.startRecord(peerObj, this._mediasoupRouter);
 					}
 				});

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Class to handle child process used for running FFmpeg
 
 const childProcess = require('child_process');
@@ -31,8 +32,9 @@ module.exports = class FFmpeg
 		{
 			this._process.stderr.setEncoding('utf-8');
 
-			this._process.stderr.on('data', (data) => {
-			 	//console.log('ffmpeg::process::data [data:%o]', data)
+			this._process.stderr.on('data', (data) => 
+			{
+				// console.log('ffmpeg::process::data [data:%o]', data)
 				return true;
 			});
 		}
@@ -41,8 +43,9 @@ module.exports = class FFmpeg
 		{
 			this._process.stdout.setEncoding('utf-8');
 
-			this._process.stdout.on('data', (data) => {
-				//console.log('ffmpeg::process::data [data:%o]', data)
+			this._process.stdout.on('data', (data) => 
+			{
+				// console.log('ffmpeg::process::data [data:%o]', data)
 				return true;
 			});
 		}
