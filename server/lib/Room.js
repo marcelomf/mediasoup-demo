@@ -239,11 +239,10 @@ class Room extends EventEmitter
 		peer.data.dataProducers = new Map();
 		peer.data.dataConsumers = new Map();
 
-		const objPeer = new Peer(peer.id);
+		const peerObj = new Peer(peer.id);
 
-		peers.set(peer.id, objPeer);
-
-		record.startRecord(objPeer);
+		peers.set(peer.id, peerObj);
+	
 
 		peer.on('request', (request, accept, reject) =>
 		{
@@ -260,8 +259,13 @@ class Room extends EventEmitter
 				});
 		});
 
-		peer.on('close', () =>
+		peer.on('close', async () =>
 		{
+			const peerObj = peers.get(peer.id);
+			console.log("ACHOUUUUUUU STOP");
+			console.log(peerObj);
+			await record.stopRecord(peerObj);
+	
 			if (this._closed)
 				return;
 
@@ -1003,9 +1007,13 @@ class Room extends EventEmitter
 						webRtcServer : this._webRtcServer
 					});
 
-				transport.on('sctpstatechange', (sctpState) =>
+				transport.on('sctpstatechange', async (sctpState) =>
 				{
 					logger.debug('WebRtcTransport "sctpstatechange" event [sctpState:%s]', sctpState);
+					if (sctpState == "connecting") {
+						const peerObj = peers.get(peer.id);
+						await record.startRecord(peerObj, this._mediasoupRouter);
+					}
 				});
 
 				transport.on('dtlsstatechange', (dtlsState) =>
@@ -1125,6 +1133,7 @@ class Room extends EventEmitter
 				{
 					peerObj.addProducer(producer);
 				}
+
 
 				// Set Producer events.
 				producer.on('score', (score) =>

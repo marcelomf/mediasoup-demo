@@ -23,7 +23,7 @@ module.exports = class FFmpeg
 		const sdpString = createSdpText(this._rtpParameters);
 		const sdpStream = convertStringToStream(sdpString);
 
-		// console.log('createProcess() [sdpString:%s]', sdpString);
+		console.log('createProcess() [sdpString:%s]', sdpString);
 
 		this._process = childProcess.spawn('ffmpeg', this._commandArgs);
 
@@ -31,31 +31,33 @@ module.exports = class FFmpeg
 		{
 			this._process.stderr.setEncoding('utf-8');
 
-			// this._process.stderr.on('data', (data) =>
-			// 	console.log('ffmpeg::process::data [data:%o]', data)
-			// );
+			this._process.stderr.on('data', (data) => {
+			 	//console.log('ffmpeg::process::data [data:%o]', data)
+				return true;
+			});
 		}
 
 		if (this._process.stdout) 
 		{
 			this._process.stdout.setEncoding('utf-8');
 
-			// this._process.stdout.on('data', (data) => 
-			// 	console.log('ffmpeg::process::data [data:%o]', data)
-			// );
+			this._process.stdout.on('data', (data) => {
+				//console.log('ffmpeg::process::data [data:%o]', data)
+				return true;
+			});
 		}
 
-		// this._process.on('message', (message) =>
-		// 	console.log('ffmpeg::process::message [message:%o]', message)
-		// );
+		this._process.on('message', (message) =>
+			console.log('ffmpeg::process::message [message:%o]', message)
+		);
 
-		// this._process.on('error', (error) =>
-		// 	console.error('ffmpeg::process::error [error:%o]', error)
-		// );
+		this._process.on('error', (error) =>
+			console.error('ffmpeg::process::error [error:%o]', error)
+		);
 
 		this._process.once('close', () => 
 		{
-			// console.log('ffmpeg::process::close');
+			console.log('ffmpeg::process::close');
 			this._observer.emit('process-close');
 		});
 
@@ -70,7 +72,7 @@ module.exports = class FFmpeg
 
 	kill() 
 	{
-		// console.log('kill() [pid:%d]', this._process.pid);
+		console.log('kill() [pid:%d]', this._process.pid);
 		this._process.kill('SIGINT');
 	}
 
@@ -101,7 +103,7 @@ module.exports = class FFmpeg
 			`${RECORD_FILE_LOCATION_PATH}/${this._rtpParameters.fileName}.webm`
 		]);
 
-		// console.log('commandArgs:%o', commandArgs);
+		console.log('commandArgs:%o', commandArgs);
 
 		return commandArgs;
 	}

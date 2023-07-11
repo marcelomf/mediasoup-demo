@@ -1,6 +1,6 @@
 // Class to hold peer data
 
-module.exports = class Peer 
+module.exports.Peer = class Peer 
 {
 	constructor(sessionId) 
 	{
