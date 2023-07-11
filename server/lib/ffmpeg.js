@@ -16,7 +16,10 @@ module.exports = class FFmpeg
 		this._rtpParameters = rtpParameters;
 		this._process = undefined;
 		this._observer = new EventEmitter();
-		this._createProcess();
+		let vm = this;
+		setTimeout(function() {
+			vm._createProcess();
+		}, 3000);
 	}
 
 	_createProcess() 
@@ -82,16 +85,35 @@ module.exports = class FFmpeg
 	get _commandArgs() 
 	{
 		let commandArgs = [
-			'-fflags',
-			'+genpts',
-			'-f',
-			'sdp',
-			'-i',
-			'pipe:0'
+			"-loglevel",
+		  	"debug",
+		      //"-thread_queue_size",
+		      //"10240",
+		      "-protocol_whitelist",
+		      "file,pipe,udp,rtp,rtmp",
+		      "-fflags",
+		      "+genpts",
+		      "-f",
+		      "sdp",
+		      "-i",
+		      "pipe:0",
+			//"-c",
+			//"copy",
+		      "-preset",
+		      "ultrafast",
+		      "-vcodec",
+		      "libx264",
+		      //"-tune",
+		      //"zerolatency",
+		      "-y",
+		      //"-bufsize",
+		      //"1000",
+			"-af",
+			"asetpts=PTS/1,arealtime,asetpts=PTS*1"
 		];
     
-		commandArgs = commandArgs.concat(this._videoArgs);
-		commandArgs = commandArgs.concat(this._audioArgs);
+		// commandArgs = commandArgs.concat(this._videoArgs);
+		// commandArgs = commandArgs.concat(this._audioArgs);
     
 		commandArgs = commandArgs.concat([
 			'-f',
