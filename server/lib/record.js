@@ -4,7 +4,7 @@ const {
 	releasePort
 } = require('./port');
 const FFmpeg = require('./ffmpeg');
-  
+const GStreamer = require('./gstreamer'); 
 const PROCESS_NAME = 'FFmpeg';
 
 const createTransport = async (transportType, router, options) => 
@@ -71,21 +71,28 @@ const publishProducerRtpStream = async (peer, producer, router) =>
 	});
   
 	peer.addTransport(rtpTransport);
-  
 	const codecs = [];
 	// eslint-disable-next-line max-len
 	// Codec passed to the RTP Consumer must match the codec in the Mediasoup router rtpCapabilities
+	router.rtpCapabilities.codecs.reverse();
 	const routerCodec = router.rtpCapabilities.codecs.find(
-		(codec) => codec.kind === producer.kind
+		(codec) => { 
+			if (producer.kind == "audio") {
+				return codec.kind === producer.kind
+			} else {
+				return codec.mimeType == 'video/H264'
+			}
+		}
 	);
+	router.rtpCapabilities.codecs.reverse();
 
 	codecs.push(routerCodec);
-  
+
 	const rtpCapabilities = {
 		codecs,
 		rtcpFeedback : []
 	};
-  
+
 	// Start the consumer paused
 	// Once the gstreamer process is ready to consume resume and send a keyframe
 	const rtpConsumer = await rtpTransport.consume({
@@ -111,7 +118,7 @@ const getProcess = (recordInfo) =>
 	switch (PROCESS_NAME) 
 	{
 		case 'GStreamer':
-			// return new GStreamer(recordInfo);
+			return new GStreamer(recordInfo);
 		// eslint-disable-next-line no-fallthrough
 		case 'FFmpeg':
 		default:

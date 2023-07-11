@@ -66,6 +66,65 @@ module.exports = class GStreamer {
 
   // Build the gstreamer child process args
   get _commandArgs () {
+	    const { video } = this._rtpParameters;
+    // Get video codec info
+    const videoCodecInfo = getCodecInfoFromRtpParameters('video', video.rtpParameters);
+
+    const VIDEO_CAPS = `application/x-rtp,media=(string)video,clock-rate=(int)${videoCodecInfo.clockRate},payload=(int)${videoCodecInfo.payloadType},encoding-name=(string)${videoCodecInfo.codecName.toUpperCase()},ssrc=(uint)${video.rtpParameters.encodings[0].ssrc}`;
+
+	      const { audio } = this._rtpParameters;
+    // Get audio codec info
+    const audioCodecInfo = getCodecInfoFromRtpParameters('audio', audio.rtpParameters);
+
+    const AUDIO_CAPS = `application/x-rtp,media=(string)audio,clock-rate=(int)${audioCodecInfo.clockRate},payload=(int)${audioCodecInfo.payloadType},encoding-name=(string)${audioCodecInfo.codecName.toUpperCase()},ssrc=(uint)${audio.rtpParameters.encodings[0].ssrc}`;
+
+	  const args = [
+		  `rtpbin name=rtpbin latency=5`,
+		  `udpsrc port=${audio.remoteRtpPort} caps="${AUDIO_CAPS}" ! rtpbin.recv_rtp_sink_0`,
+		  `rtpbin. ! queue ! rtpopusdepay ! opusdec ! audioconvert ! audioresample ! voaacenc ! mux.`,
+		  `udpsrc port=${video.remoteRtpPort} caps="${VIDEO_CAPS}" ! rtpbin.recv_rtp_sink_1`,
+		  //`rtpbin. ! queue ! rtpvp8depay ! vp8dec ! videoconvert ! x264enc ! mux.`,
+		  //`rtpbin. ! queue ! decodebin ! videoconvert ! x264enc ! mux.`,
+		  `rtpbin. ! queue ! rtph264depay ! mux.`,
+		  `flvmux name=mux streamable=true ! rtmpsink sync=false location=rtmp://media.apruma.com/apruma/teste`,
+	  ];
+
+	  return args;
+/*
+	  const args = [
+    `rtpbin name=rtpbin latency=50 buffer-mode=0`,
+    '!',
+    `udpsrc port=${video.remoteRtpPort} caps="${VIDEO_CAPS}"`,
+    '!',
+    'rtpbin.recv_rtp_sink_0 rtpbin.',
+    '!',
+    '"application/x-rtp, media=(string)video"',
+    '!',
+    'queue',
+    '!',
+    'decodebin',
+    '!',
+    'videoconvert',
+    '!',
+    'x264enc',
+    '!',
+    'h264parse',
+    '!',
+    'mux.',
+    'flvmux streamable=true name=mux',
+    '!',
+    'rtmpsink location=rtmp://media.apruma.com/apruma/teste',
+    `udpsrc address=127.0.0.1 port=${video.remoteRtcpPort}`,
+    '!',
+    "application/x-rtcp",
+    '!',
+    'rtpbin.recv_rtcp_sink_0 rtpbin.send_rtcp_src_0',
+    '!',
+    `udpsink host=127.0.0.1 port=${video.localRtcpPort} bind-address=127.0.0.1 bind-port=${video.remoteRtcpPort} sync=false async=false`
+];
+	  return args;
+*/
+
     let commandArgs = [
       `rtpbin name=rtpbin latency=50 buffer-mode=0 sdes="application/x-rtp-source-sdes, cname=(string)${this._rtpParameters.video.rtpParameters.rtcp.cname}"`,
       '!'
@@ -90,11 +149,19 @@ module.exports = class GStreamer {
       `udpsrc port=${video.remoteRtpPort} caps="${VIDEO_CAPS}"`,
       '!',
       'rtpbin.recv_rtp_sink_0 rtpbin.',
+   //   '!',
+ //     'queue',
       '!',
-      'queue',
-      '!',
-      'rtpvp8depay',
-      '!',
+'decodebin',
+    '!',
+   'videoconvert',
+  '!',
+   'x264enc',
+   '!',
+   'h264parse',
+   '!',
+    //  'rtpvp8depay',
+    //  '!',
       'mux.'
     ];
   }
@@ -112,12 +179,12 @@ module.exports = class GStreamer {
       'rtpbin.recv_rtp_sink_1 rtpbin.',
       '!',
       'queue',
-      '!',
-      'rtpopusdepay',
-      '!',
-      'opusdec',
-      '!',
-      'opusenc',
+      //'!',
+      //'rtpopusdepay',
+      // '!',
+      // 'opusdec',
+     // '!',
+     // 'opusenc',
       '!',
       'mux.'
     ];
@@ -141,6 +208,11 @@ module.exports = class GStreamer {
   }
 
   get _sinkArgs () {
+	return [
+		'flvmux streamable=true name=mux',
+		'!',
+		'rtmpsink location=rtmp://media.apruma.com/apruma/teste'
+	];
     return [
       'webmmux name=mux',
       '!',

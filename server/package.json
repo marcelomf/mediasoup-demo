@@ -22,7 +22,8 @@
     "mediasoup": "github:versatica/mediasoup#v3",
     "node-media-server": "^2.6.2",
     "pidusage": "^2.0.21",
-    "protoo-server": "^4.0.5"
+    "protoo-server": "^4.0.5",
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

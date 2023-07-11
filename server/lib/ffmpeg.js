@@ -37,7 +37,7 @@ module.exports = class FFmpeg
 
 			this._process.stderr.on('data', (data) => 
 			{
-				// console.log('ffmpeg::process::data [data:%o]', data)
+				console.log('ffmpeg::process::data [data:%o]', data)
 				return true;
 			});
 		}
@@ -48,7 +48,7 @@ module.exports = class FFmpeg
 
 			this._process.stdout.on('data', (data) => 
 			{
-				// console.log('ffmpeg::process::data [data:%o]', data)
+				console.log('ffmpeg::process::data [data:%o]', data)
 				return true;
 			});
 		}
@@ -85,6 +85,10 @@ module.exports = class FFmpeg
 	get _commandArgs() 
 	{
 		let commandArgs = [
+			//"-analyzeduration",
+			//"100MB",
+			//"-probesize",
+		//	"100MB",
 			"-loglevel",
 		  	"debug",
 		      //"-thread_queue_size",
@@ -97,19 +101,25 @@ module.exports = class FFmpeg
 		      "sdp",
 		      "-i",
 		      "pipe:0",
-			//"-c",
-			//"copy",
+//                        '-c:v',
+//                        'libx264',
+//			'-ar',
+//			'44100',
+ //                       '-c:a',
+  //                      'aac',
+
+
+		//	"-c",
+		//	"copy",
 		      "-preset",
 		      "ultrafast",
 		      "-vcodec",
 		      "libx264",
-		      //"-tune",
-		      //"zerolatency",
+		      "-tune",
+		      "zerolatency",
 		      "-y",
 		      //"-bufsize",
 		      //"1000",
-			"-af",
-			"asetpts=PTS/1,arealtime,asetpts=PTS*1"
 		];
     
 		// commandArgs = commandArgs.concat(this._videoArgs);
