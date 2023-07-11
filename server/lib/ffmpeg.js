@@ -142,6 +142,10 @@ module.exports = class FFmpeg
 	get _commandArgs() 
 	{
 		let commandArgs = [
+			"-analyzeduration",
+			"100MB",
+			"-probesize",
+			"100MB",
 			'-loglevel',
 			'debug',
 			'-protocol_whitelist',
