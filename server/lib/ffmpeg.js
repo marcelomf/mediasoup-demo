@@ -82,6 +82,31 @@ module.exports = class FFmpeg
 	get _commandArgs() 
 	{
 		let commandArgs = [
+			'-fflags',
+			'+genpts',
+			'-f',
+			'sdp',
+			'-i',
+			'pipe:0'
+		];
+    
+		commandArgs = commandArgs.concat(this._videoArgs);
+		commandArgs = commandArgs.concat(this._audioArgs);
+    
+		commandArgs = commandArgs.concat([
+			'-f',
+			'flv',
+			'rtmp://media.apruma.com/apruma/teste'
+		]);
+    
+		console.log('commandArgs:%o', commandArgs);
+    
+		return commandArgs;
+	}
+    
+	get _commandArgsOriginal() 
+	{
+		let commandArgs = [
 			'-loglevel',
 			'debug',
 			'-protocol_whitelist',
@@ -93,21 +118,21 @@ module.exports = class FFmpeg
 			'-i',
 			'pipe:0'
 		];
-
+    
 		commandArgs = commandArgs.concat(this._videoArgs);
 		commandArgs = commandArgs.concat(this._audioArgs);
-
+    
 		commandArgs = commandArgs.concat([
 
 			/*
-      '-flags',
-      '+global_header',
-      */
+          '-flags',
+          '+global_header',
+          */
 			`${RECORD_FILE_LOCATION_PATH}/${this._rtpParameters.fileName}.webm`
 		]);
-
+    
 		console.log('commandArgs:%o', commandArgs);
-
+    
 		return commandArgs;
 	}
 
