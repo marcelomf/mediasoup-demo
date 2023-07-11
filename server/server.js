@@ -24,7 +24,7 @@ const utils = require('./lib/utils');
 const Room = require('./lib/Room');
 const interactiveServer = require('./lib/interactiveServer');
 const interactiveClient = require('./lib/interactiveClient');
-const NodeMediaServer = require('node-media-server');
+// const NodeMediaServer = require('node-media-server');
 
 const logger = new Logger();
 
@@ -109,9 +109,9 @@ async function run()
 		// }
 	};
 
-	const nms = new NodeMediaServer(configMediaService);
+	// const nms = new NodeMediaServer(configMediaService);
 
-	nms.run();
+	// nms.run();
 
 	// Log rooms status every X seconds.
 	setInterval(() =>

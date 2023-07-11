@@ -74,16 +74,22 @@ const publishProducerRtpStream = async (peer, producer, router) =>
 	const codecs = [];
 	// eslint-disable-next-line max-len
 	// Codec passed to the RTP Consumer must match the codec in the Mediasoup router rtpCapabilities
+
 	router.rtpCapabilities.codecs.reverse();
 	const routerCodec = router.rtpCapabilities.codecs.find(
-		(codec) => { 
-			if (producer.kind == "audio") {
-				return codec.kind === producer.kind
-			} else {
-				return codec.mimeType == 'video/H264'
+		(codec) => 
+		{ 
+			if (producer.kind == 'audio') 
+			{
+				return codec.kind === producer.kind;
+			}
+			else 
+			{
+				return codec.mimeType == 'video/H264';
 			}
 		}
 	);
+
 	router.rtpCapabilities.codecs.reverse();
 
 	codecs.push(routerCodec);

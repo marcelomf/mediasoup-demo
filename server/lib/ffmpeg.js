@@ -16,8 +16,10 @@ module.exports = class FFmpeg
 		this._rtpParameters = rtpParameters;
 		this._process = undefined;
 		this._observer = new EventEmitter();
-		let vm = this;
-		setTimeout(function() {
+		const vm = this;
+
+		setTimeout(function() 
+		{
 			vm._createProcess();
 		}, 3000);
 	}
@@ -37,7 +39,8 @@ module.exports = class FFmpeg
 
 			this._process.stderr.on('data', (data) => 
 			{
-				console.log('ffmpeg::process::data [data:%o]', data)
+				console.log('ffmpeg::process::data [data:%o]', data);
+				
 				return true;
 			});
 		}
@@ -48,7 +51,8 @@ module.exports = class FFmpeg
 
 			this._process.stdout.on('data', (data) => 
 			{
-				console.log('ffmpeg::process::data [data:%o]', data)
+				console.log('ffmpeg::process::data [data:%o]', data);
+				
 				return true;
 			});
 		}
@@ -82,44 +86,43 @@ module.exports = class FFmpeg
 		this._process.kill('SIGINT');
 	}
 
-	get _commandArgs() 
+	get _commandArgsToRtmp() 
 	{
 		let commandArgs = [
-			//"-analyzeduration",
-			//"100MB",
-			//"-probesize",
+			// "-analyzeduration",
+			// "100MB",
+			// "-probesize",
 		//	"100MB",
-			"-loglevel",
-		  	"debug",
-		      //"-thread_queue_size",
-		      //"10240",
-		      "-protocol_whitelist",
-		      "file,pipe,udp,rtp,rtmp",
-		      "-fflags",
-		      "+genpts",
-		      "-f",
-		      "sdp",
-		      "-i",
-		      "pipe:0",
-//                        '-c:v',
-//                        'libx264',
-//			'-ar',
-//			'44100',
- //                       '-c:a',
-  //                      'aac',
+			'-loglevel',
+			'debug',
+			// "-thread_queue_size",
+			// "10240",
+			'-protocol_whitelist',
+			'file,pipe,udp,rtp,rtmp',
+			'-fflags',
+			'+genpts',
+			'-f',
+			'sdp',
+			'-i',
+			'pipe:0',
+			//                        '-c:v',
+			//                        'libx264',
+			//			'-ar',
+			//			'44100',
+			//                       '-c:a',
+			//                      'aac',
 
-
-		//	"-c",
-		//	"copy",
-		      "-preset",
-		      "ultrafast",
-		      "-vcodec",
-		      "libx264",
-		      "-tune",
-		      "zerolatency",
-		      "-y",
-		      //"-bufsize",
-		      //"1000",
+			//	"-c",
+			//	"copy",
+			'-preset',
+			'ultrafast',
+			'-vcodec',
+			'libx264',
+			'-tune',
+			'zerolatency',
+			'-y'
+			// "-bufsize",
+			// "1000",
 		];
     
 		// commandArgs = commandArgs.concat(this._videoArgs);
@@ -136,7 +139,7 @@ module.exports = class FFmpeg
 		return commandArgs;
 	}
     
-	get _commandArgsOriginal() 
+	get _commandArgs() 
 	{
 		let commandArgs = [
 			'-loglevel',
