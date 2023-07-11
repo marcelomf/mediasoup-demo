@@ -7,5 +7,5 @@ export function getProtooUrl({ roomId, peerId, consumerReplicas })
 {
 	const hostname = window.location.hostname;
 
-	return `wss://${hostname}:${protooPort}/?roomId=${roomId}&peerId=${peerId}&consumerReplicas=${consumerReplicas}`;
+	return `wss://media.apruma.com:4443/?roomId=${roomId}&peerId=${peerId}&consumerReplicas=${consumerReplicas}`;
 }
