@@ -124,8 +124,8 @@ const getProcess = (recordInfo) =>
 const startRecord = async (peer, router) => 
 {
 	const recordInfo = {};
-  
-	for (const producer of peer.producers) 
+
+	for (const producer of peer.data.producers.values())
 	{
 		try 
 		{
@@ -145,7 +145,7 @@ const startRecord = async (peer, router) =>
 
 	setTimeout(async () => 
 	{
-		for (const consumer of peer.consumers) 
+		for (const consumer of peer.data.consumers.values())
 		{
 			// eslint-disable-next-line max-len
 			// Sometimes the consumer gets resumed before the GStreamer process has fully started
