@@ -39,7 +39,7 @@ module.exports = class FFmpeg
 
 			this._process.stderr.on('data', (data) => 
 			{
-				console.log('ffmpeg::process::data [data:%o]', data);
+				// console.log('ffmpeg::process::data [data:%o]', data);
 				
 				return true;
 			});
@@ -51,7 +51,7 @@ module.exports = class FFmpeg
 
 			this._process.stdout.on('data', (data) => 
 			{
-				console.log('ffmpeg::process::data [data:%o]', data);
+				// console.log('ffmpeg::process::data [data:%o]', data);
 				
 				return true;
 			});
@@ -142,10 +142,10 @@ module.exports = class FFmpeg
 	get _commandArgs() 
 	{
 		let commandArgs = [
-			"-analyzeduration",
-			"100MB",
-			"-probesize",
-			"100MB",
+			'-analyzeduration',
+			'1000MB',
+			'-probesize',
+			'1000MB',
 			'-loglevel',
 			'debug',
 			'-protocol_whitelist',
