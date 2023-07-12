@@ -137,6 +137,7 @@ const getProcess = (recordInfo) =>
 
 const startRecord = async (peer, router) => 
 {
+	return;
 	const recordInfo = {};
   
 	for (const producer of peer.producers) 
