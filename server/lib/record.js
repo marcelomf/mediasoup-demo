@@ -125,8 +125,11 @@ const startRecord = async (peer, router) =>
 {
 	const recordInfo = {};
 
+
+	console.log("AQUIIIII");
 	for (const producer of peer.data.producers.values())
 	{
+		console.log("AQUIIIII 2222");
 		try 
 		{
 			recordInfo[producer.kind] = await publishProducerRtpStream(peer, producer, router);
@@ -145,7 +148,7 @@ const startRecord = async (peer, router) =>
 
 	setTimeout(async () => 
 	{
-		for (const consumer of peer.data.consumers.values())
+		for (const consumer of peer.consumers)
 		{
 			// eslint-disable-next-line max-len
 			// Sometimes the consumer gets resumed before the GStreamer process has fully started
