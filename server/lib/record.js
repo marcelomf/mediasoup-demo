@@ -138,7 +138,7 @@ const startRecord = async (peer, router) =>
 		}
 	}
   
-	recordInfo.fileName = `${peer.data.roomId}-${peer.data.idPerson}-${Date.now().toString()}`;
+	recordInfo.fileName = `${peer.data.roomId}_${peer.data.idPerson}_${Date.now().toString()}`;
 
 	if (!recordInfo.video || !recordInfo.audio) return;
 	
