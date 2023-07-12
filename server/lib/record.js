@@ -7,30 +7,18 @@ const FFmpeg = require('./ffmpeg');
 const GStreamer = require('./gstreamer'); 
 const PROCESS_NAME = 'FFmpeg';
 
-const createTransport = async (transportType, router, options) => 
+const _createTransport = async (transportType, router, options) => 
 {
 	// console.log('createTransport() [type:%s. options:%o]', transportType, options);
   
 	switch (transportType) 
 	{
 		case 'webRtc':
-			return await router.createWebRtcTransport({
-				listenIps          : [ { ip: '0.0.0.0', announcedIp: '149.248.20.157' } ], // TODO: Change announcedIp to your external IP or domain name
-				enableUdp          : true,
-				enableTcp          : true,
-				preferUdp          : true,
-				maxIncomingBitrate : 1500000
-			});
+			return await router.createWebRtcTransport(options);
 		case 'plain':
-			return await router.createPlainTransport({
-				listenIp : { ip: '0.0.0.0', announcedIp: '149.248.20.157' }, // TODO: Change announcedIp to your external IP or domain name
-				rtcpMux  : true,
-				comedia  : false
-			});
+			return await router.createPlainTransport(options);
 	}
 };
-
-module.exports.createTransport = createTransport;
 
 const publishProducerRtpStream = async (peer, producer, router) => 
 {
@@ -47,7 +35,7 @@ const publishProducerRtpStream = async (peer, producer, router) =>
 		rtpTransportConfig.rtcpMux = false;
 	}
   
-	const rtpTransport = await createTransport('plain', router, rtpTransportConfig);
+	const rtpTransport = await _createTransport('plain', router, rtpTransportConfig);
   
 	// Set the receiver RTP ports
 	const remoteRtpPort = await getPort();
@@ -80,16 +68,14 @@ const publishProducerRtpStream = async (peer, producer, router) =>
 		(codec) => 
 		{ 
 			return codec.kind === producer.kind;
-			/*
-			if (producer.kind == 'audio') 
-			{
-				return codec.kind === producer.kind;
-			}
-			else 
-			{
-				return codec.mimeType == 'video/H264';
-			}
-			*/
+			// if (producer.kind == 'audio') 
+			// {
+			// 	return codec.kind === producer.kind;
+			// }
+			// else 
+			// {
+			// 	return codec.mimeType == 'video/H264';
+			// }
 		}
 	);
 
@@ -151,7 +137,7 @@ const startRecord = async (peer, router) =>
 		}
 	}
   
-	recordInfo.fileName = Date.now().toString();
+	recordInfo.fileName = `${peer.data.roomId}-${peer.data.idPerson}-${Date.now().toString()}`;
 
 	if (!recordInfo.video || !recordInfo.audio) return;
 	

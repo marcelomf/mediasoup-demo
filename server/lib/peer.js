@@ -10,6 +10,7 @@ module.exports.Peer = class Peer
 		this.consumers = [];
 		this.process = undefined;
 		this.remotePorts = [];
+		this.data = {};
 	}
   
 	addTransport(transport) 

@@ -225,8 +225,10 @@ class Room extends EventEmitter
 
 		// Not joined after a custom protoo 'join' request is later received.
 		peer.data.consume = consume;
+		peer.data.roomId = this._roomId;
 		peer.data.joined = false;
 		peer.data.displayName = undefined;
+		peer.data.idPerson = undefined;
 		peer.data.device = undefined;
 		peer.data.rtpCapabilities = undefined;
 		peer.data.sctpCapabilities = undefined;
@@ -240,6 +242,8 @@ class Room extends EventEmitter
 		peer.data.dataConsumers = new Map();
 
 		const peerObj = new Peer(peer.id);
+
+		peerObj.data = peer.data;
 
 		peers.set(peer.id, peerObj);
 	
@@ -261,11 +265,6 @@ class Room extends EventEmitter
 
 		peer.on('close', async () =>
 		{
-			// eslint-disable-next-line no-shadow
-			const peerObj = peers.get(peer.id);
-
-			await record.stopRecord(peerObj);
-	
 			if (this._closed)
 				return;
 
@@ -889,6 +888,7 @@ class Room extends EventEmitter
 				const {
 					displayName,
 					device,
+					idPerson,
 					rtpCapabilities,
 					sctpCapabilities
 				} = request.data;
@@ -896,6 +896,7 @@ class Room extends EventEmitter
 				// Store client data into the protoo Peer data object.
 				peer.data.joined = true;
 				peer.data.displayName = displayName;
+				peer.data.idPerson = idPerson;
 				peer.data.device = device;
 				peer.data.rtpCapabilities = rtpCapabilities;
 				peer.data.sctpCapabilities = sctpCapabilities;
@@ -1010,12 +1011,12 @@ class Room extends EventEmitter
 				transport.on('sctpstatechange', async (sctpState) =>
 				{
 					logger.debug('WebRtcTransport "sctpstatechange" event [sctpState:%s]', sctpState);
-					if (sctpState == 'connecting') 
-					{
-						const peerObj = peers.get(peer.id);
+					// if (sctpState == 'connecting') 
+					// {
+					// 	const peerObj = peers.get(peer.id);
 
-						await record.startRecord(peerObj, this._mediasoupRouter);
-					}
+					// 	await record.startRecord(peerObj, this._mediasoupRouter);
+					// }
 				});
 
 				transport.on('dtlsstatechange', (dtlsState) =>
@@ -1190,11 +1191,20 @@ class Room extends EventEmitter
 						.catch(() => {});
 				}
 
+				if (producer.kind === 'video' && peerObj != null) 
+				{
+					await record.startRecord(peerObj, this._mediasoupRouter);
+				}
+
 				break;
 			}
 
 			case 'closeProducer':
 			{
+				const peerObj = peers.get(peer.id);
+
+				await record.stopRecord(peerObj);
+
 				// Ensure the Peer is joined.
 				if (!peer.data.joined)
 					throw new Error('Peer not yet joined');
