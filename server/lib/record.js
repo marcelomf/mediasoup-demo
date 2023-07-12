@@ -181,9 +181,12 @@ const stopRecord = async (peer) =>
 		// throw new Error(`Peer with id ${jsonMessage.sessionId} is not recording`);
 		return;
 	}
-  
+	peer.transports = [];
+	peer.producers = [];
+	peer.consumers = [];  
 	peer.process.kill();
 	peer.process = undefined;
+
   
 	// Release ports from port set
 	for (const remotePort of peer.remotePorts) 
