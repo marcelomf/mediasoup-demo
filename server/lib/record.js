@@ -129,6 +129,7 @@ const startRecord = async (peer, router) =>
 	console.log("AQUIIIII");
 	for (const producer of peer.data.producers.values())
 	{
+		if (!producer) continue;
 		console.log("AQUIIIII 2222");
 		try 
 		{
