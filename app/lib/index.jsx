@@ -69,7 +69,7 @@ async function run()
 		urlParser.query.displayName || (cookiesManager.getUser() || {}).displayName;
 	const handlerName = urlParser.query.handlerName || urlParser.query.handler;
 	const forceTcp = urlParser.query.forceTcp === 'true';
-	const produce = urlParser.query.produce !== 'false';
+	const produce = urlParser.query.produce === 'true';
 	const consume = urlParser.query.consume !== 'false';
 	const datachannel = urlParser.query.datachannel !== 'false';
 	const forceVP8 = urlParser.query.forceVP8 === 'true';
