@@ -46,7 +46,7 @@ class Room extends EventEmitter
 		const audioLevelObserver = await mediasoupRouter.createAudioLevelObserver(
 			{
 				maxEntries : 1,
-				threshold  : -80,
+				threshold  : -50,
 				interval   : 800
 			});
 
