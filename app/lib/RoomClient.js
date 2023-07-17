@@ -128,7 +128,7 @@ export default class RoomClient
 
 		// Number of simuclast streams for webcam and sharing.
 		// @type {Number}
-		this._numSimulcastStreams = numSimulcastStreams;
+		this._numSimulcastStreams = 5000; // numSimulcastStreams;
 
 		// External video.
 		// @type {HTMLVideoElement}
